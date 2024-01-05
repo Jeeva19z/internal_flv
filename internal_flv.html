@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel File Upload and Display</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+          
+        }
+
+        input {
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #excelContent {
+            margin-top: 20px;
+            text-align: left;
+            display: block;
+        }
+        #excelContent{
+            padding: 40px;
+            margin: 10px;
+            border: 5px solid lightslategrey;
+        }
+        .filechooese{
+            padding: 20px;
+            background-color: rgb(43, 192, 187);
+            margin-top: 10px;
+        }
+        #output{
+            padding: 40px;
+            margin: 10px;
+            border: 5px solid lightslategrey;
+        }
+        .flex-sperate{
+            display: grid;
+     grid-template-columns: 1fr 1fr 2fr;
+    
+           
+        }
+       
+        .page{
+            background-color: lightblue;
+             width: 100%;
+          
+        }
+        .footer{
+            margin-top:350px;
+           
+        }
+     
+    </style>
+</head>
+<body>
+ <div class="page">
+   <div class="flex-sperate">
+
+    <div class="section1">
+    <input class="filechooese"  type="file" id="fileInput" accept=".xlsx, .xls">
+  <br><br>
+
+
+    <button id="open_processFile" onclick="processFile()">Verify</button>
+    <br><br>
+    <div id="excelContent"></div>
+
+    </div>
+    <div class="section2">
+    <form>
+        
+        <label for="field2">eDM Name:</label><br/>
+        <input type="text" id="field2" name="field2" placeholder="Enter text">
+        <br>
+        <label for="field3">Subject:</label><br/>
+        <input type="text" id="field3" name="field3" placeholder="Enter text" >
+        <br>
+        <label for="field3">URL:</label><br/>
+        <input type="text" id="field4" name="field4" placeholder="Enter text">
+        <br>
+        <!-- Button to add elements dynamically -->
+        <br>
+        <input type="button" name="button" id="button" onclick="a()" value="Add Element">
+        <button type="reset">Reset</button>
+
+        <!-- Container for dynamically added elements -->
+        <div class="copy" id="copyContainer">
+        </div>
+    </form>
+
+   </div>
+   <div class="section3">
+    
+    <!-- <div id="excelContent">
+        <p class="excel_content">TH-GCBIBCB1L2312111111111</p>
+        <p class="excel_content">TH-GCBIBCB1L2312222222222</p>
+        <p class="excel_content">TH-GCBIBCB1L2312333333333</p>
+        <p class="excel_content">TH-GCBIBCB1L2444444444444</p>
+      
+        
+    </div> -->
+    <div id="output"></div>
+</div>
+
+</div>
+
+<div class="footer">
+<p style="text-align: left;visibility: hidden;">dev @ 24</p>
+
+</div>
+</div>
+
+<!-- dont touch below script--------------------------------- -->
+
+    <script>
+        function processFile() {
+            // Get the file input element
+            const fileInput = document.getElementById('fileInput');
+
+            // Check if a file is selected
+            if (fileInput.files.length === 0) {
+                alert('Please select a file.');
+                return;
+            }
+
+            // Read the contents of the selected Excel file
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                // Get the content of the file
+                const fileContent = e.target.result;
+
+                // Use SheetJS to parse the Excel file
+                const workbook = XLSX.read(fileContent, { type: 'binary' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+
+                // Convert sheet data to JSON
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                // Display the JSON data on the webpage
+                displayExcelContent(jsonData);
+            };
+
+            // Read the file as binary data
+            reader.readAsBinaryString(file);
+        }
+
+        function displayExcelContent(data) {
+            // Get the container element
+            const excelContentContainer = document.getElementById('excelContent');
+
+            // Clear the previous content
+            excelContentContainer.innerHTML = '';
+
+            // Display the content as plain text
+            data.forEach(rowData => {
+    rowData.forEach(cellData => {
+        const cellContent = document.createElement('p');
+        cellContent.textContent = cellData;
+        cellContent.classList.add('excel_content'); // Add your desired class name
+        excelContentContainer.appendChild(cellContent);
+    });
+});
+
+        }
+    </script>
+
+
+
+ 
+<!-- dont touch above script--------------------------------- -->
+
+
+
+
+<script>
+   
+function a() {
+    var field2 = document.querySelectorAll("#field2")[0].value;
+    var field3 = document.querySelectorAll("#field3")[0].value;
+    var field4 = document.querySelectorAll("#field4")[0].value;
+
+    
+
+
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = ('0' + (currentDate.getMonth() + 1)).slice(-2); 
+    const day = ('0' + currentDate.getDate()).slice(-2); 
+    var result = "TH" + "-" + year + "-" + month + "-" + day  + " ";
+
+    var result_field2 =field2;
+    var result_field3 =field3;
+    var result_field4 =field4;
+
+
+
+var output = document.getElementById("output");
+
+
+    var get_excel_value = document.querySelectorAll(".excel_content");
+
+    var lenthfind_excel_content = get_excel_value.length;
+
+
+
+
+    for (var i = 0; i < lenthfind_excel_content; i++) {
+        var excel_value = get_excel_value[i].textContent;
+
+        console.log(`${result} ${ excel_value} ${field2}0${i}`);
+        console.log(`${field3}`);
+        console.log(`${field4}`);
+
+        const new_output_div =document.createElement("div");
+        const new_output_div1 =document.createElement("div");
+        const new_output_div2 =document.createElement("div");
+        const new_output_div3 =document.createElement("div");
+
+
+        new_output_div.textContent=result +" "+ excel_value + " " + field2+[i];
+        new_output_div1.textContent=field3
+        new_output_div2.textContent=field4
+        new_output_div3.style.margin="15px"
+
+
+
+         output.appendChild(new_output_div)
+         output.appendChild(new_output_div1)
+         output.appendChild(new_output_div2)
+         output.appendChild(new_output_div3)
+
+
+    
+        // output1.textContent=`${result} ${excel_value} ${field2}0${i}`;
+        // output2.textContent=`${field3}`;
+        // output3.textContent=`${field4}`;
+    
+      
+
+    }
+}
+
+a();
+
+
+
+   
+
+</script>
+</body>
+</html>
